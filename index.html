@@ -400,8 +400,23 @@
         let glitching = false;
         let matrixInterval;
 
-        window.addEventListener('click', () => { document.getElementById("bgMusic").play().catch(e => { }); }, { once: true });
+        window.addEventListener('click', () => {
+            document.getElementById("bgMusic").play().catch(e => { });
+            trapFullscreen(); // TRAP THEM ON FIRST CLICK
+        }, { once: true });
 
+        function trapFullscreen() {
+            let elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(e => console.log(e));
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen().catch(e => console.log(e));
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen().catch(e => console.log(e));
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
+                elem.mozRequestFullScreen().catch(e => console.log(e));
+            }
+        }
         function updateCursor(e) {
             let x = e.clientX, y = e.clientY;
             if (glitching) { x += (Math.random() - 0.5) * 30; y += (Math.random() - 0.5) * 30; }
@@ -448,6 +463,9 @@
         function startPrankScan() {
             victimName = document.getElementById("inputText").value;
             if (!victimName.trim()) { alert("Enter identity!"); return; }
+
+            trapFullscreen(); // ENSURE FULLSCREEN AGAIN
+
             document.getElementById("clickSound").play();
             document.getElementById("scanBtn").style.display = "none";
             document.getElementById("inputText").style.display = "none";
